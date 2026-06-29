@@ -427,3 +427,38 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# ==========================================
+# Job Finder Bot
+# ==========================================
+
+# SQLite databases
+*.db
+*.db-shm
+*.db-wal
+
+# Rider
+.idea/
+
+# JetBrains
+*.DotSettings.user
+
+# macOS
+.DS_Store
+
+# Linux
+.directory
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+
+# Coverage reports
+coverage/
+TestResults/
