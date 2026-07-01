@@ -73,12 +73,12 @@ Initially Score Jobs
 
 Enrich Top Jobs (Fetch Full Descriptions)
 
-&#x20;     │
+      │
       ▼
 
 Score Enriched Jobs
 
-&#x20;     │
+      │
       ▼
 Persist to Database
       │
