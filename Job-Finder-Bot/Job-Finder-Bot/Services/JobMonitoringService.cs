@@ -8,12 +8,10 @@ namespace Job_Finder_Bot.Services;
 public class JobMonitoringService
 {
     private readonly JobScoringService _scoringService;
-    private readonly int _minimumScoreThreshold;
 
-    public JobMonitoringService(int minimumScoreThreshold = 20)
+    public JobMonitoringService()
     {
         _scoringService = new JobScoringService();
-        _minimumScoreThreshold = minimumScoreThreshold;
     }
 
     public async Task<List<JobPosting>> ProcessNewJobsAsync(List<JobPosting> newJobs)
@@ -22,6 +20,19 @@ public class JobMonitoringService
 
         var processedIds = new HashSet<string>();
         var jobsToInsert = new List<JobPosting>();
+
+        var handler = new HttpClientHandler
+        {
+            AllowAutoRedirect = true,
+            MaxAutomaticRedirections = 10
+        };
+
+        var httpClient = new HttpClient(handler)
+        {
+            Timeout = TimeSpan.FromSeconds(20)
+        };
+
+        DescriptionEnrichmentService _descriptionEnrichmentService = new DescriptionEnrichmentService(httpClient);
 
         var existingRelevantUnnotified = await db.JobPostings
             .Where(j => j.IsRelevant && !j.HasNotified)
@@ -39,41 +50,85 @@ public class JobMonitoringService
         foreach (var job in newJobs)
         {
             if (string.IsNullOrWhiteSpace(job.UniqueJobId))
+            {
                 continue;
+            }
 
             if (!processedIds.Add(job.UniqueJobId))
+            {
                 continue;
+            }
 
             // If already in DB, skip inserting it
             if (existingJobIds.Contains(job.UniqueJobId))
+            {
+                continue;
+            }
+
+            if (string.IsNullOrWhiteSpace(job.JobTitle) || string.IsNullOrWhiteSpace(job.Company) || string.IsNullOrWhiteSpace(job.SourceUrl))
+            {
                 continue;
 
-            if (string.IsNullOrWhiteSpace(job.JobTitle) ||
-                string.IsNullOrWhiteSpace(job.Company) ||
-                string.IsNullOrWhiteSpace(job.SourceUrl))
-                continue;
+            }
 
             if (job.PostedDate == default)
+            {
                 job.PostedDate = DateTime.UtcNow;
+            }
 
             if (job.DiscoveredDate == default)
+            {
                 job.DiscoveredDate = DateTime.UtcNow;
+            }
 
             job.Score = _scoringService.CalculateScore(job);
-            job.IsRelevant = job.Score >= _minimumScoreThreshold;
+            job.IsRelevant = job.Score >= JobSearchConstants.MinimumScoreThresholdForEnrichment;
             job.HasNotified = false;
 
             jobsToInsert.Add(job);
 
             if (job.IsRelevant)
+            {
                 jobsForNotificationPool.Add(job);
+            }
         }
 
-        var topJobs = jobsForNotificationPool
-            .Where(j => j.IsRelevant && !j.HasNotified)
-            .OrderByDescending(j => j.Score)
-            .Take(JobSearchConstants.MaxJobsToNotify)
-            .ToList();
+        var enrichmentCandidates = jobsForNotificationPool
+        .Where(j => j.IsRelevant && !j.HasNotified)
+        .OrderByDescending(j => j.Score)
+        .Take(JobSearchConstants.MaxJobsToEnrich)
+        .ToList();
+
+        foreach (var job in enrichmentCandidates)
+        {
+            if (!job.DescriptionEnriched)
+            {
+                Console.WriteLine($"Enriching description for job: {job.JobTitle} at {job.Company}");
+                var enrichedDescription = await _descriptionEnrichmentService.TryEnrichDescriptionAsync(job);
+
+                if (!string.IsNullOrWhiteSpace(enrichedDescription))
+                {
+                    Console.WriteLine($"Enriched description for job: {job.JobTitle} at {job.Company}");
+                    job.Description = enrichedDescription;
+                    job.DescriptionEnriched = true;
+
+                    // Re-score using the full description
+                    job.Score = _scoringService.CalculateScore(job);
+                    job.IsRelevant = job.Score >= JobSearchConstants.MinimumScoreThresholdForNotifications;
+                }
+                else
+                {
+                    Console.WriteLine($"Failed to enrich description for job: {job.JobTitle} at {job.Company}");
+                    job.DescriptionEnriched = false;
+                }
+            }
+        }
+
+        var topJobs = enrichmentCandidates
+        .Where(j => j.IsRelevant && !j.HasNotified)
+        .OrderByDescending(j => j.Score)
+        .Take(JobSearchConstants.MaxJobsToNotify)
+        .ToList();
 
         foreach (var job in topJobs)
         {

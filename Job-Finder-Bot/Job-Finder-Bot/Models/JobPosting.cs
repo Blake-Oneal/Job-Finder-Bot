@@ -8,11 +8,14 @@ public class JobPosting
     public string? Location { get; set; }
     public string? Description { get; set; }
     public required string SourceUrl { get; set; }
+    public string RedirectUrl { get; set; } = ""; // Optional: Used for html scraping
+    public string JobUrl { get; set; } = string.Empty; // Optional: Used for html scraping
     public string UniqueJobId { get; set; } = string.Empty;
     public DateTime PostedDate { get; set; }
     public DateTime DiscoveredDate { get; set; }
     public int Score { get; set; }
     public bool HasNotified { get; set; }
     public bool IsRelevant { get; set; }
+    public bool DescriptionEnriched { get; set; }
     public string? Salary { get; set; }
 }

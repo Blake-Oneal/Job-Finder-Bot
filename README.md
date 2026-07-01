@@ -9,48 +9,48 @@ This project was built to automate my own software engineering job
 search by reducing time spent manually browsing job boards while
 surfacing the positions that best match my experience.
 
-------------------------------------------------------------------------
+\---
 
 ## Features
 
--   Searches for jobs using the Adzuna Job Search API
--   Supports both remote software engineering positions and local jobs
-    within a configurable radius
--   Aggregates results across multiple search queries
--   Removes duplicate job postings
--   Scores each job using a configurable weighted scoring algorithm
--   Filters out security clearance positions, irrelevant job titles, and
-    low-scoring opportunities
--   Stores job history using Entity Framework Core with SQLite
--   Prevents duplicate notifications
--   Sends the highest-ranked jobs directly to a Discord channel
--   Runs continuously on a configurable polling interval
+* Searches for jobs using the Adzuna Job Search API
+* Supports both remote software engineering positions and local jobs
+within a configurable radius
+* Aggregates results across multiple search queries
+* Removes duplicate job postings
+* Scores each job using a configurable weighted scoring algorithm
+* Filters out security clearance positions, irrelevant job titles, and
+low-scoring opportunities
+* Stores job history using Entity Framework Core with SQLite
+* Prevents duplicate notifications
+* Sends the highest-ranked jobs directly to a Discord channel
+* Runs continuously on a configurable polling interval
 
-------------------------------------------------------------------------
+\---
 
 ## Tech Stack
 
 ### Languages
 
--   C#
--   SQL
+* C#
+* SQL
 
-### Frameworks & Libraries
+### Frameworks \& Libraries
 
--   .NET
--   Entity Framework Core
--   Discord.Net
+* .NET
+* Entity Framework Core
+* Discord.Net
 
 ### Database
 
--   SQLite
+* SQLite
 
 ### APIs
 
--   Adzuna Job Search API
--   Discord API
+* Adzuna Job Search API
+* Discord API
 
-------------------------------------------------------------------------
+\---
 
 ## How It Works
 
@@ -58,7 +58,7 @@ surfacing the positions that best match my experience.
 Search Queries
       │
       ▼
-Retrieve Remote & Local Jobs
+Retrieve Remote \& Local Jobs
       │
       ▼
 Remove Duplicates
@@ -67,8 +67,18 @@ Remove Duplicates
 Filter Irrelevant Jobs
       │
       ▼
-Score Jobs
+Initially Score Jobs
       │
+      ▼
+
+Enrich Top Jobs (Fetch Full Descriptions)
+
+&#x20;     │
+      ▼
+
+Score Enriched Jobs
+
+&#x20;     │
       ▼
 Persist to Database
       │
@@ -86,7 +96,7 @@ title, required experience, and remote availability.
 Jobs that do not meet the minimum score threshold are stored but
 excluded from future notifications.
 
-------------------------------------------------------------------------
+\---
 
 ## Configuration
 
@@ -95,17 +105,19 @@ store API credentials.
 
 Configure the following variables before running the application:
 
-  Variable         Description
-  ---------------- ----------------------------
-  DISCORD_TOKEN    Discord Bot Token
-  ADZUNA_APP_ID    Adzuna API Application ID
-  ADZUNA_APP_KEY   Adzuna API Application Key
+Variable         Description
+
+\---
+
+DISCORD\_TOKEN    Discord Bot Token
+ADZUNA\_APP\_ID    Adzuna API Application ID
+ADZUNA\_APP\_KEY   Adzuna API Application Key
 
 Example (PowerShell):
 
 ``` powershell
-[System.Environment]::SetEnvironmentVariable(
-    "DISCORD_TOKEN",
+\[System.Environment]::SetEnvironmentVariable(
+    "DISCORD\_TOKEN",
     "your-discord-token",
     "User"
 )
@@ -114,7 +126,7 @@ Example (PowerShell):
 Restart Visual Studio or your terminal after updating environment
 variables.
 
-------------------------------------------------------------------------
+\---
 
 ## Running the Project
 
@@ -125,7 +137,7 @@ dotnet restore
 dotnet run
 ```
 
-------------------------------------------------------------------------
+\---
 
 ## Current Scoring Strategy
 
@@ -138,20 +150,20 @@ SQL - Azure - Kubernetes - REST APIs - Entity Framework
 **Negative weighting** - Senior leadership positions - Security
 clearance requirements - Management roles - Non-software positions
 
-------------------------------------------------------------------------
+\---
 
 ## Future Improvements
 
--   Support Greenhouse, Lever, and Ashby job boards
--   Configurable scoring via JSON/YAML
--   Web dashboard
--   Email notifications
--   Resume keyword matching
--   Docker deployment
--   Unit and integration tests
--   AI-assisted job relevance scoring
+* Support Greenhouse, Lever, and Ashby job boards
+* Configurable scoring via JSON/YAML
+* Web dashboard
+* Email notifications
+* Resume keyword matching
+* Docker deployment
+* Unit and integration tests
+* AI-assisted job relevance scoring
 
-------------------------------------------------------------------------
+\---
 
 ## Why I Built This
 
@@ -168,8 +180,9 @@ This project also provided an opportunity to continue sharpening my
 .NET, Entity Framework, REST API, and software architecture skills while
 solving a real-world problem.
 
-------------------------------------------------------------------------
+\---
 
 ## License
 
 This project is intended for educational and portfolio purposes.
+
