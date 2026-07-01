@@ -51,6 +51,11 @@ public static class JobSearchConstants
     public const int MaxJobsToNotify = 25;
 
     /// <summary>
+    /// Maximum number of jobs to enrich with full descriptions (to avoid excessive API calls)
+    /// </summary>
+    public const int MaxJobsToEnrich = 30;
+
+    /// <summary>
     /// Maximum pages to fetch per query (safety limit)
     /// </summary>
     public const int MaxPages = 20;
@@ -117,11 +122,14 @@ public static class JobSearchConstants
     // ===== SCORING CONFIGURATION =====
 
     /// <summary>
-    /// Minimum score threshold for job notifications
-    /// Jobs with scores below this won't trigger Discord notifications
+    /// Minimum score threshold for description enrichment
     /// </summary>
-    public const int MinimumScoreThreshold = 30;
+    public const int MinimumScoreThresholdForEnrichment = 35;
 
+    /// <summary>
+    /// Minimum score threshold for job notifications
+    /// </summary>
+    public const int MinimumScoreThresholdForNotifications = 55;
 
     // ===== TIMING CONFIGURATION =====
 

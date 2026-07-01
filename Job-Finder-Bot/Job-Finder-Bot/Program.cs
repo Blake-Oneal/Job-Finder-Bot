@@ -27,7 +27,7 @@ var config = new DiscordSocketConfig
 var client = new DiscordSocketClient(config);
 
 // Initialize the job monitoring service
-var jobMonitor = new JobMonitoringService(minimumScoreThreshold: JobSearchConstants.MinimumScoreThreshold);
+var jobMonitor = new JobMonitoringService();
 var adzunaService = new AdzunaService();
 
 // Initialize database
